@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "246362102175",
+    "firebase_url": "https://receipt-scanner-34404.firebaseio.com",
+    "project_id": "receipt-scanner-34404",
+    "storage_bucket": "receipt-scanner-34404.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246362102175:android:222a4e0bee03f047",
+        "android_client_info": {
+          "package_name": "cs184.cs.ucsb.edu.receiptscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "246362102175-s5icfcap6l74k08qa3qd9fd9q3v9le14.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cs184.cs.ucsb.edu.receiptscanner",
+            "certificate_hash": "ce32420d4d88e0650bdee48b4dcbcd71eb34bb64"
+          }
+        },
+        {
+          "client_id": "246362102175-9ahe9rgieb20npi9dofqv2305d76ngp1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnYKXTnnEwS1ZgBqGWO1WJN_253X2OZTE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "246362102175-9ahe9rgieb20npi9dofqv2305d76ngp1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
