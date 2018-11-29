@@ -1,10 +1,7 @@
 package cs184.cs.ucsb.edu.receiptscanner;
 
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -15,7 +12,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,22 +22,16 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.document.FirebaseVisionCloudDocumentRecognizerOptions;
 import com.google.firebase.ml.vision.document.FirebaseVisionDocumentText;
 import com.google.firebase.ml.vision.document.FirebaseVisionDocumentTextRecognizer;
-import com.google.firebase.ml.vision.text.RecognizedLanguage;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.System.exit;
 
 public class MainActivity extends AppCompatActivity {
 
+    private SplitReceiptFragment splitReceiptFragment;
     private Button takePhotoBtn;
+    private Button galleryBtn;
     private Bitmap bitmap;
     private boolean detectedFirstItem = false;
     private boolean addToItem = false;
@@ -57,24 +47,42 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         takePhotoBtn = findViewById(R.id.takePhotoBtn);
+        galleryBtn = findViewById(R.id.galleryBtn);
 
         FirebaseApp.initializeApp(this);
 
         takePhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ArrayList<String> products = new ArrayList<String>();
+                ArrayList<String> prices = new ArrayList<String>();
+                for (Product p : productsList){
+                    products.add(p.getName());
+                    prices.add("$" + String.format("%.2f", p.getPrice()));
+                }
+                splitReceiptFragment = new SplitReceiptFragment();
+                Bundle args = new Bundle();
+                args.putStringArrayList("products", products);
+                args.putStringArrayList("prices", prices);
+                splitReceiptFragment.setArguments(args);
+                splitReceiptFragment.show(getSupportFragmentManager(), "show split receipt fragment");
+            }
+        });
+
+
+        galleryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
                 startActivityForResult(intent, 1);
             }
         });
-
     }
 
     @Override
@@ -89,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
     }
 
     public void detectText() {
@@ -126,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
                                                 isTax = true;
                                                 continue;
                                             } else if(wordText.equals("SUBTOTAL")) {
-                                                //END FUNCTION
+                                                //END FU
+                                                // NCTION
                                             }
 
                                             if(TextUtils.isDigitsOnly(wordText) && wordText.length() <= 7) {
@@ -189,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             for (Product p : productsList)
-                                System.out.println("Product: " + p.name + ", Price: " + p.price);
+                                Log.e("Product", p.name + " price " + p.price);
+                                //System.out.println("Product: " + p.name + ", Price: " + p.price);
                         }
                     })
                     .addOnFailureListener(
