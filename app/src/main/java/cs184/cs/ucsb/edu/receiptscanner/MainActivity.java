@@ -3,6 +3,7 @@ package cs184.cs.ucsb.edu.receiptscanner;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,8 +32,8 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
 
     private SplitReceiptFragment splitReceiptFragment;
-    private Button takePhotoBtn;
     private Button galleryBtn;
+    private TextView loadingTextView;
     private Bitmap bitmap;
     private boolean detectedFirstItem = false;
     private boolean addToItem = false;
@@ -43,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private String currItemPrice = "";
     ArrayList<Product> productsList = new ArrayList<Product>();
     private String itemNumber = "";
-
-
+    boolean taskDone = false;
 
 
     @Override
@@ -52,29 +53,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        takePhotoBtn = findViewById(R.id.takePhotoBtn);
         galleryBtn = findViewById(R.id.galleryBtn);
+        loadingTextView = findViewById(R.id.loadingTextView);
+        loadingTextView.setVisibility(View.INVISIBLE);
 
         FirebaseApp.initializeApp(this);
-
-        takePhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ArrayList<String> products = new ArrayList<String>();
-                ArrayList<String> prices = new ArrayList<String>();
-                for (Product p : productsList){
-                    products.add(p.getName());
-                    prices.add("$" + String.format("%.2f", p.getPrice()));
-                }
-                splitReceiptFragment = new SplitReceiptFragment();
-                Bundle args = new Bundle();
-                args.putStringArrayList("products", products);
-                args.putStringArrayList("prices", prices);
-                splitReceiptFragment.setArguments(args);
-                splitReceiptFragment.show(getSupportFragmentManager(), "show split receipt fragment");
-            }
-        });
-
 
         galleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,12 +75,14 @@ public class MainActivity extends AppCompatActivity {
             Uri uri = data.getData();
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                detectText();
+                new MyAsyncTask().execute();
+                //detectText();
             } catch(IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     public void detectText() {
         if(bitmap == null) {
@@ -133,8 +118,7 @@ public class MainActivity extends AppCompatActivity {
                                                 isTax = true;
                                                 continue;
                                             } else if(wordText.equals("SUBTOTAL")) {
-                                                //END FU
-                                                // NCTION
+                                                //END FUNCTION
                                             }
 
                                             if(TextUtils.isDigitsOnly(wordText) && wordText.length() <= 7) {
@@ -155,7 +139,14 @@ public class MainActivity extends AppCompatActivity {
                                                         currItem = "CPN";
                                                     }
 
-                                                    productsList.add(new Product(currItem, Double.parseDouble(currItemPrice)));
+                                                    if(currItem == "CPN"){
+                                                        productsList.get(productsList.size() - 1).price -= Double.parseDouble(currItemPrice);
+                                                    } else if (currItem == "TAX"){
+                                                        productsList.get(productsList.size() - 1).price += Double.parseDouble(currItemPrice);
+                                                    }else{
+                                                        productsList.add(new Product(currItem, Double.parseDouble(currItemPrice)));
+                                                    }
+
 
                                                     currItem = "";
                                                     currItemPrice = "";
@@ -195,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
                             }
+                            taskDone = true;
 
                             for (Product p : productsList)
                                 Log.e("Product", p.name + " price " + p.price);
@@ -209,6 +201,42 @@ public class MainActivity extends AppCompatActivity {
                                     // ...
                                 }
                             });
+
+        }
+    }
+
+    private class MyAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            galleryBtn.setVisibility(View.INVISIBLE);
+            loadingTextView.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            detectText();
+            while(taskDone == false){
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            ArrayList<String> products = new ArrayList<String>();
+            ArrayList<String> prices = new ArrayList<String>();
+            for (Product p : productsList){
+                products.add(p.getName());
+                prices.add("$" + String.format("%.2f", p.getPrice()));
+            }
+            splitReceiptFragment = new SplitReceiptFragment();
+            splitReceiptFragment.setCancelable(false);
+            Bundle args = new Bundle();
+            args.putStringArrayList("products", products);
+            args.putStringArrayList("prices", prices);
+            splitReceiptFragment.setArguments(args);
+            splitReceiptFragment.show(getSupportFragmentManager(), "show split receipt fragment");
         }
     }
 

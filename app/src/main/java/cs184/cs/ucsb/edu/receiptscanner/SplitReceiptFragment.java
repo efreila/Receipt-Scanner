@@ -32,6 +32,8 @@ public class SplitReceiptFragment extends DialogFragment {
 
     ArrayList<String> productsList;
     ArrayList<String> pricesList;
+    double[] userPayments = new double[4];
+
 
     public SplitReceiptFragment() {}
 
@@ -85,8 +87,8 @@ public class SplitReceiptFragment extends DialogFragment {
         CheckBox thirdCheckBox;
         CheckBox fourthCheckBox;
 
-        for (int i = 0; i < gridView.getChildCount() ; i++ ){
-            v = gridView.getChildAt(i);
+        for (int i = 0; i < adapter.getCount() ; i++ ){
+            v = gridView.getChildAt(i); 
             firstCheckBox = (CheckBox) v.findViewById(R.id.checkBox0);
             secondCheckBox = (CheckBox) v.findViewById(R.id.checkBox1);
             thirdCheckBox = (CheckBox) v.findViewById(R.id.checkBox2);
@@ -112,7 +114,14 @@ public class SplitReceiptFragment extends DialogFragment {
                 checks[3] = true;
             }
 
-            double dividedPrice = Double.parseDouble(pricesList.get(i).substring(1))/counter;
+            Double dividedPrice = Double.parseDouble(pricesList.get(i).substring(1))/counter;
+
+            for(int j = 0; j < checks.length; j++){
+                if(checks[j] == true)
+                    userPayments[i] += dividedPrice;
+                Log.e("userPayments:" + j , userPayments[j] + "");
+            }
+
             Log.e("price divided", dividedPrice + "");
         }
     }

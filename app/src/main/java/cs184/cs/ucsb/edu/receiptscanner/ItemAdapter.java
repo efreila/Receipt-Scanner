@@ -52,8 +52,15 @@ public class ItemAdapter extends BaseAdapter {
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             gridView = inflater.inflate(R.layout.receipt_item, null);
         }
-        TextView product = (TextView)gridView.findViewById(R.id.productTextView);
-        TextView price = (TextView)gridView.findViewById(R.id.priceTextView);
+        TextView product = (TextView) gridView.findViewById(R.id.productTextView);
+        TextView price = (TextView) gridView.findViewById(R.id.priceTextView);
+
+        CheckBox checkBox = (CheckBox) gridView.findViewById(R.id.checkBox0);
+        CheckBox checkBoxOne = (CheckBox) gridView.findViewById(R.id.checkBox1);
+        CheckBox checkBoxTwo = (CheckBox) gridView.findViewById(R.id.checkBox1);
+        CheckBox checkBoxThree = (CheckBox) gridView.findViewById(R.id.checkBox1);
+
+
 
         product.setText(productsList.get(position));
         price.setText(pricesList.get(position));
