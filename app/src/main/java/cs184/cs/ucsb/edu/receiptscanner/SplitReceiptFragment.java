@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -26,6 +27,8 @@ public class SplitReceiptFragment extends DialogFragment {
     View view;
     GridView gridView;
     Context context;
+    ItemAdapter adapter;
+    Button doneBtn;
 
     ArrayList<String> productsList;
     ArrayList<String> pricesList;
@@ -57,11 +60,61 @@ public class SplitReceiptFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.split_receipt_activity, container, false);
         gridView = (GridView) view.findViewById(R.id.gridView);
+        doneBtn = (Button) view.findViewById(R.id.doneBtn);
 
-        ItemAdapter adapter = new ItemAdapter(getActivity(), productsList, pricesList);
+        adapter = new ItemAdapter(getActivity(), productsList, pricesList);
         gridView.setAdapter(adapter);
 
+        doneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkGridView(gridView);
+            }
+        });
 
         return view;
     }
+
+    private void checkGridView(GridView gridView) {
+        boolean[] checks;
+        int counter;
+        View v;
+
+        CheckBox firstCheckBox;
+        CheckBox secondCheckBox;
+        CheckBox thirdCheckBox;
+        CheckBox fourthCheckBox;
+
+        for (int i = 0; i < gridView.getChildCount() ; i++ ){
+            v = gridView.getChildAt(i);
+            firstCheckBox = (CheckBox) v.findViewById(R.id.checkBox0);
+            secondCheckBox = (CheckBox) v.findViewById(R.id.checkBox1);
+            thirdCheckBox = (CheckBox) v.findViewById(R.id.checkBox2);
+            fourthCheckBox = (CheckBox) v.findViewById(R.id.checkBox3);
+
+            checks = new boolean[4];
+            counter = 0;
+
+            if(firstCheckBox.isChecked()){
+                counter++;
+                checks[0] = true;
+            }
+            if(secondCheckBox.isChecked()){
+                counter++;
+                checks[1] = true;
+            }
+            if(thirdCheckBox.isChecked()){
+                counter++;
+                checks[2] = true;
+            }
+            if(fourthCheckBox.isChecked()){
+                counter++;
+                checks[3] = true;
+            }
+
+            double dividedPrice = Double.parseDouble(pricesList.get(i).substring(1))/counter;
+            Log.e("price divided", dividedPrice + "");
+        }
+    }
+
 }

@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +29,16 @@ public class ItemAdapter extends BaseAdapter {
         return productsList.size();
     }
 
-    public Object getItem(int position) {
+    public Object getItem(int position){
+        return new Product(productsList.get(position), Double.parseDouble(pricesList.get(position)));
+    }
+
+    public Object getProduct(int position) {
         return productsList.get(position);
+    }
+
+    public Object getPrice(int position) {
+        return pricesList.get(position);
     }
 
     public long getItemId(int position) {
@@ -37,8 +47,6 @@ public class ItemAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         View gridView = convertView;
-        String currentURI;
-        TextView textView;
 
         if (convertView == null) {
             inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -46,9 +54,11 @@ public class ItemAdapter extends BaseAdapter {
         }
         TextView product = (TextView)gridView.findViewById(R.id.productTextView);
         TextView price = (TextView)gridView.findViewById(R.id.priceTextView);
+
         product.setText(productsList.get(position));
         price.setText(pricesList.get(position));
 
         return gridView;
     }
+
 }
