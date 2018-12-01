@@ -13,6 +13,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Sam:"
+        android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,6 +24,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Kate:"
+        android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/firstUserName" />
 
@@ -33,6 +35,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Arvan:"
+        android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/secondUserName" />
 
@@ -43,6 +46,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Eric:"
+        android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/thirdUserName" />
 
@@ -53,6 +57,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Price"
+        android:textSize="20dp"
         app:layout_constraintStart_toEndOf="@+id/firstUserName"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,6 +68,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
+        android:textSize="20dp"
         app:layout_constraintStart_toEndOf="@+id/secondUserName"
         app:layout_constraintTop_toBottomOf="@+id/firstUserDebt" />
 
@@ -73,6 +79,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
+        android:textSize="20dp"
         app:layout_constraintStart_toEndOf="@+id/thirdUserName"
         app:layout_constraintTop_toBottomOf="@+id/secondUserDebt" />
 
@@ -83,6 +90,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
+        android:textSize="20dp"
         app:layout_constraintStart_toEndOf="@+id/fourthUserName"
         app:layout_constraintTop_toBottomOf="@+id/thirdUserDebt" />
 
@@ -92,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="FINISH"
+        android:text="SCAN NEW RECEIPT"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>
