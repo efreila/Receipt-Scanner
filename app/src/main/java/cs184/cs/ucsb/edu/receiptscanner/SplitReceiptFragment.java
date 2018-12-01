@@ -8,6 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -25,10 +28,13 @@ import java.util.ArrayList;
 
 public class SplitReceiptFragment extends DialogFragment {
     View view;
-    GridView gridView;
     Context context;
     ItemAdapter adapter;
     Button doneBtn;
+
+    RecyclerView recyclerView;
+    ReceiptItemAdapter receiptItemAdapter;
+    SplitPricesFragment splitPricesFragment;
 
     ArrayList<String> productsList;
     ArrayList<String> pricesList;
@@ -61,69 +67,88 @@ public class SplitReceiptFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.split_receipt_activity, container, false);
-        gridView = (GridView) view.findViewById(R.id.gridView);
         doneBtn = (Button) view.findViewById(R.id.doneBtn);
+        recyclerView = (RecyclerView) view.findViewById(R.id.mRecyclerView);
 
-        adapter = new ItemAdapter(getActivity(), productsList, pricesList);
-        gridView.setAdapter(adapter);
+        receiptItemAdapter = new ReceiptItemAdapter(productsList, pricesList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(receiptItemAdapter);
 
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkGridView(gridView);
+                boolean[] checkedStatesA = receiptItemAdapter.getmCheckedStateA();
+                boolean[] checkedStatesB = receiptItemAdapter.getmCheckedStateB();
+                boolean[] checkedStatesC = receiptItemAdapter.getmCheckedStateC();
+                boolean[] checkedStatesD = receiptItemAdapter.getmCheckedStateD();
+                calculateDebt(checkedStatesA, checkedStatesB, checkedStatesC, checkedStatesD);
             }
         });
 
         return view;
     }
 
-    private void checkGridView(GridView gridView) {
-        boolean[] checks;
-        int counter;
-        View v;
+    private void calculateDebt(boolean[] checkedStatesA, boolean[] checkedStatesB, boolean[] checkedStatesC, boolean[] checkedStatesD) {
+        int divider;
+        double[] newItemPrices = new double[receiptItemAdapter.getItemCount()];
 
-        CheckBox firstCheckBox;
-        CheckBox secondCheckBox;
-        CheckBox thirdCheckBox;
-        CheckBox fourthCheckBox;
+        for(int i = 0; i < receiptItemAdapter.getItemCount(); i++) {
+            divider = 0;
 
-        for (int i = 0; i < adapter.getCount() ; i++ ){
-            v = gridView.getChildAt(i); 
-            firstCheckBox = (CheckBox) v.findViewById(R.id.checkBox0);
-            secondCheckBox = (CheckBox) v.findViewById(R.id.checkBox1);
-            thirdCheckBox = (CheckBox) v.findViewById(R.id.checkBox2);
-            fourthCheckBox = (CheckBox) v.findViewById(R.id.checkBox3);
-
-            checks = new boolean[4];
-            counter = 0;
-
-            if(firstCheckBox.isChecked()){
-                counter++;
-                checks[0] = true;
+            if(!checkedStatesA[i]) {
+                divider++;
             }
-            if(secondCheckBox.isChecked()){
-                counter++;
-                checks[1] = true;
+            if(!checkedStatesB[i]) {
+                divider++;
             }
-            if(thirdCheckBox.isChecked()){
-                counter++;
-                checks[2] = true;
+            if(!checkedStatesC[i]) {
+                divider++;
             }
-            if(fourthCheckBox.isChecked()){
-                counter++;
-                checks[3] = true;
+            if(!checkedStatesD[i]) {
+                divider++;
             }
 
-            Double dividedPrice = Double.parseDouble(pricesList.get(i).substring(1))/counter;
-
-            for(int j = 0; j < checks.length; j++){
-                if(checks[j] == true)
-                    userPayments[i] += dividedPrice;
-                Log.e("userPayments:" + j , userPayments[j] + "");
+            if(divider == 0){
+                Toast.makeText(getActivity(), "Missing payer for " + productsList.get(i),
+                        Toast.LENGTH_LONG).show();
+            }
+            else{
+                newItemPrices[i] = Double.parseDouble(pricesList.get(i).substring(1))/divider;
             }
 
-            Log.e("price divided", dividedPrice + "");
         }
+
+        for(int i = 0; i < newItemPrices.length; i++) {
+            if(!checkedStatesA[i]) {
+                userPayments[0] += newItemPrices[i];
+            }
+            if(!checkedStatesB[i]) {
+                userPayments[1] += newItemPrices[i];
+            }
+            if(!checkedStatesC[i]) {
+                userPayments[2] += newItemPrices[i];
+            }
+            if(!checkedStatesD[i]) {
+                userPayments[3] += newItemPrices[i];
+            }
+        }
+
+        for(double p : userPayments)
+            Log.e("userpayments", p + "");
+
+        displayFragment();
+    }
+
+    public void displayFragment(){
+        splitPricesFragment = new SplitPricesFragment();
+        splitPricesFragment.setCancelable(false);
+
+        Bundle args = new Bundle();
+        args.putDoubleArray("debtList", userPayments);
+        splitPricesFragment.setArguments(args);
+        splitPricesFragment.show(getFragmentManager(), "show split prices fragment");
     }
 
 }

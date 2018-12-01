@@ -1,6 +1,7 @@
 package cs184.cs.ucsb.edu.receiptscanner;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -25,7 +26,6 @@ public class SplitPricesFragment extends DialogFragment {
     TextView secondUserDebt;
     TextView thirdUserDebt;
     TextView fourthUserDebt;
-
 
     double[] debtList;
 
@@ -60,17 +60,18 @@ public class SplitPricesFragment extends DialogFragment {
         thirdUserDebt = (TextView) view.findViewById(R.id.thirdUserDebt);
         fourthUserDebt = (TextView) view.findViewById(R.id.fourthUserDebt);
 
-        firstUserDebt.setText(Double.toString(debtList[0]));
-        secondUserDebt.setText(Double.toString(debtList[1]));
-        thirdUserDebt.setText(Double.toString(debtList[2]));
-        fourthUserDebt.setText(Double.toString(debtList[3]));
+        firstUserDebt.setText("$" + String.format("%.2f", debtList[0]));
+        secondUserDebt.setText("$" + String.format("%.2f", debtList[1]));
+        thirdUserDebt.setText("$" + String.format("%.2f", debtList[2]));
+        fourthUserDebt.setText("$" + String.format("%.2f", debtList[3]));
 
         finishBtn = (Button) view.findViewById(R.id.finishBtn);
 
         finishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Go back to homepage
+                Intent myIntent = new Intent(getActivity(), MainActivity.class);
+                getActivity().startActivity(myIntent);
             }
         });
 
