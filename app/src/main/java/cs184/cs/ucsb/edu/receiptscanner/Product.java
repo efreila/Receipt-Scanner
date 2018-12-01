@@ -1,5 +1,6 @@
 package cs184.cs.ucsb.edu.receiptscanner;
 
+
 public class Product {
 
     public String name;
@@ -11,6 +12,8 @@ public class Product {
         this.price = itemPrice;
     }
 
+    public String getName(){return this.name;}
 
+    public double getPrice(){return this.price;}
 
 }
