@@ -3,11 +3,7 @@ package cs184.cs.ucsb.edu.receiptscanner;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -31,6 +24,7 @@ public class SplitReceiptFragment extends DialogFragment {
     Context context;
     ItemAdapter adapter;
     Button doneBtn;
+    boolean missingPayer;
 
     RecyclerView recyclerView;
     ReceiptItemAdapter receiptItemAdapter;
@@ -93,24 +87,25 @@ public class SplitReceiptFragment extends DialogFragment {
     private void calculateDebt(boolean[] checkedStatesA, boolean[] checkedStatesB, boolean[] checkedStatesC, boolean[] checkedStatesD) {
         int divider;
         double[] newItemPrices = new double[receiptItemAdapter.getItemCount()];
-
+        missingPayer = false;
         for(int i = 0; i < receiptItemAdapter.getItemCount(); i++) {
             divider = 0;
 
-            if(!checkedStatesA[i]) {
+            if(checkedStatesA[i]) {
                 divider++;
             }
-            if(!checkedStatesB[i]) {
+            if(checkedStatesB[i]) {
                 divider++;
             }
-            if(!checkedStatesC[i]) {
+            if(checkedStatesC[i]) {
                 divider++;
             }
-            if(!checkedStatesD[i]) {
+            if(checkedStatesD[i]) {
                 divider++;
             }
 
             if(divider == 0){
+                missingPayer = true;
                 Toast.makeText(getActivity(), "Missing payer for " + productsList.get(i),
                         Toast.LENGTH_LONG).show();
             }
@@ -121,16 +116,16 @@ public class SplitReceiptFragment extends DialogFragment {
         }
 
         for(int i = 0; i < newItemPrices.length; i++) {
-            if(!checkedStatesA[i]) {
+            if(checkedStatesA[i]) {
                 userPayments[0] += newItemPrices[i];
             }
-            if(!checkedStatesB[i]) {
+            if(checkedStatesB[i]) {
                 userPayments[1] += newItemPrices[i];
             }
-            if(!checkedStatesC[i]) {
+            if(checkedStatesC[i]) {
                 userPayments[2] += newItemPrices[i];
             }
-            if(!checkedStatesD[i]) {
+            if(checkedStatesD[i]) {
                 userPayments[3] += newItemPrices[i];
             }
         }
@@ -138,7 +133,8 @@ public class SplitReceiptFragment extends DialogFragment {
         for(double p : userPayments)
             Log.e("userpayments", p + "");
 
-        displayFragment();
+        if(!missingPayer)
+             displayFragment();
     }
 
     public void displayFragment(){
@@ -147,6 +143,7 @@ public class SplitReceiptFragment extends DialogFragment {
 
         Bundle args = new Bundle();
         args.putDoubleArray("debtList", userPayments);
+        userPayments = new double[4];
         splitPricesFragment.setArguments(args);
         splitPricesFragment.show(getFragmentManager(), "show split prices fragment");
     }

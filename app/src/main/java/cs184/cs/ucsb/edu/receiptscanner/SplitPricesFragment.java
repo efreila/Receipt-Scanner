@@ -12,10 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 public class SplitPricesFragment extends DialogFragment {
     View view;
