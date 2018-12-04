@@ -29,7 +29,7 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
             price = (TextView) view.findViewById(R.id.priceTextView);
 
             checkBox0 = (CheckBox) view.findViewById(R.id.checkBox0);
-            checkBox1 = (CheckBox) view.findViewById(R.id.checkBox0);
+            checkBox1 = (CheckBox) view.findViewById(R.id.checkBox1);
             checkBox2 = (CheckBox) view.findViewById(R.id.checkBox2);
             checkBox3 = (CheckBox) view.findViewById(R.id.checkBox3);
         }
@@ -60,11 +60,62 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
         holder.product.setText(currProduct);
         holder.price.setText(currPrice);
 
-        holder.checkBox0.setChecked(false);
-        holder.checkBox1.setChecked(false);
-        holder.checkBox2.setChecked(false);
-        holder.checkBox3.setChecked(false);
+//        holder.checkBox0.setChecked(false);
+//        holder.checkBox1.setChecked(false);
+//        holder.checkBox2.setChecked(false);
+//        holder.checkBox3.setChecked(false);
 
+
+        holder.checkBox0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mCheckedStateA[position] = true;
+                } else {
+                    mCheckedStateA[position] = false;
+                }
+                Log.e("Position ", position + " product: " + productsList.get(position) + "checkedA " +mCheckedStateA[position]);
+            }
+        });
+
+        holder.checkBox1.setOnCheckedChangeListener(new   CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mCheckedStateB[position] = true;
+                } else {
+                    mCheckedStateB[position] = false;
+                }
+                Log.e("Position ", position + " product: " + productsList.get(position) + "checkedB " + mCheckedStateB[position]);
+            }
+
+        });
+
+        holder.checkBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mCheckedStateC[position] = true;
+                } else {
+                    mCheckedStateC[position] = false;
+                }
+                Log.e("Position ", position + " product: " + productsList.get(position) + "checkedC " + mCheckedStateC[position]);
+
+            }
+        });
+
+        holder.checkBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mCheckedStateD[position] = true;
+                } else {
+                    mCheckedStateD[position] = false;
+                }
+                Log.e("Position ", position + " product: " + productsList.get(position) + "checkedD " + mCheckedStateD[position]);
+
+            }
+        });
 
         if(mCheckedStateA[position]) {
             holder.checkBox0.setChecked(true);
@@ -90,56 +141,6 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
             holder.checkBox3.setChecked(false);
         }
 
-        holder.checkBox0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mCheckedStateA[position] = false;
-                } else {
-                    mCheckedStateA[position] = true;
-                }
-                Log.e("Position ", position + " product: " + productsList.get(position) + "checkedA " +mCheckedStateA[position]);
-            }
-        });
-
-        holder.checkBox1.setOnCheckedChangeListener(new   CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonView.isPressed()) {
-                    mCheckedStateB[position] = false;
-                } else {
-                    mCheckedStateB[position] = true;
-                }
-                Log.e("Position ", position + " product: " + productsList.get(position) + "checkedB " + mCheckedStateB[position]);
-            }
-
-        });
-
-        holder.checkBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonView.isPressed()) {
-                    mCheckedStateC[position] = false;
-                } else {
-                    mCheckedStateC[position] = true;
-                }
-                Log.e("Position ", position + " product: " + productsList.get(position) + "checkedC " + mCheckedStateC[position]);
-
-            }
-        });
-
-        holder.checkBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (buttonView.isPressed()) {
-                    mCheckedStateD[position] = false;
-                } else {
-                    mCheckedStateD[position] = true;
-                }
-                Log.e("Position ", position + " product: " + productsList.get(position) + "checkedD " + mCheckedStateD[position]);
-
-            }
-        });
     }
 
     @Override
