@@ -14,17 +14,18 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class SplitPricesFragment extends DialogFragment {
     View view;
     Context context;
     Button finishBtn;
 
-    TextView firstUserDebt;
-    TextView secondUserDebt;
-    TextView thirdUserDebt;
-    TextView fourthUserDebt;
+    TextView firstUserDebt, secondUserDebt, thirdUserDebt, fourthUserDebt;
+    TextView firstUsername, secondUsername, thirdUsername, fourthUsername;
 
     double[] debtList;
+    ArrayList<String> users;
 
     public SplitPricesFragment() {}
 
@@ -45,6 +46,7 @@ public class SplitPricesFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        users = getArguments().getStringArrayList("users");
         debtList = getArguments().getDoubleArray("debtList");
     }
 
@@ -52,10 +54,35 @@ public class SplitPricesFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.split_prices_activity, container, false);
 
+        firstUsername = (TextView) view.findViewById(R.id.firstUserName);
+        secondUsername = (TextView) view.findViewById(R.id.secondUserName);
+        thirdUsername = (TextView) view.findViewById(R.id.thirdUserName);
+        fourthUsername = (TextView) view.findViewById(R.id.fourthUserName);
+
         firstUserDebt = (TextView) view.findViewById(R.id.firstUserDebt);
         secondUserDebt = (TextView) view.findViewById(R.id.secondUserDebt);
         thirdUserDebt = (TextView) view.findViewById(R.id.thirdUserDebt);
         fourthUserDebt = (TextView) view.findViewById(R.id.fourthUserDebt);
+
+
+        firstUsername.setText(users.get(0));
+        secondUsername.setText(users.get(1));
+        if(users.size() == 3){
+            thirdUsername.setText(users.get(2));
+            fourthUsername.setVisibility(View.INVISIBLE);
+            fourthUserDebt.setVisibility(View.INVISIBLE);
+        }
+        else if(users.size() == 4){
+            thirdUsername.setText(users.get(2));
+            fourthUsername.setText(users.get(3));
+        }
+        else{
+            thirdUsername.setVisibility(View.INVISIBLE);
+            thirdUserDebt.setVisibility(View.INVISIBLE);
+            fourthUsername.setVisibility(View.INVISIBLE);
+            fourthUserDebt.setVisibility(View.INVISIBLE);
+        }
+
 
         firstUserDebt.setText("$" + String.format("%.2f", debtList[0]));
         secondUserDebt.setText("$" + String.format("%.2f", debtList[1]));

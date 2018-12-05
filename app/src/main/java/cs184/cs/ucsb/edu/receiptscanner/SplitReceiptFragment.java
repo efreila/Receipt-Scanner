@@ -66,6 +66,7 @@ public class SplitReceiptFragment extends DialogFragment {
         doneBtn = (Button) view.findViewById(R.id.doneBtn);
         recyclerView = (RecyclerView) view.findViewById(R.id.mRecyclerView);
 
+        productsList.remove("SUBTOTAL");
         receiptItemAdapter = new ReceiptItemAdapter(productsList, pricesList, usersList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -145,6 +146,7 @@ public class SplitReceiptFragment extends DialogFragment {
 
         Bundle args = new Bundle();
         args.putDoubleArray("debtList", userPayments);
+        args.putStringArrayList("users", usersList);
         userPayments = new double[4];
         splitPricesFragment.setArguments(args);
         splitPricesFragment.show(getFragmentManager(), "show split prices fragment");

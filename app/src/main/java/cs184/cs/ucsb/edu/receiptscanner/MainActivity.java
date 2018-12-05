@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private String currItem = "";
     private String currItemPrice = "";
     ArrayList<Product> productsList = new ArrayList<Product>();
-    private String itemNumber = "";
     boolean taskDone = false;
 
 
@@ -253,16 +252,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
             ArrayList<String> users = new ArrayList<String>();
-            if(userName1.getText().toString().equals("")) {
+            if(!userName1.getText().toString().equals("")) {
                 users.add(userName1.getText().toString());
             }
-            if(userName2.getText().toString().equals("")) {
+            if(!userName2.getText().toString().equals("")) {
                 users.add(userName2.getText().toString());
             }
-            if(userName3.getText().toString().equals("")) {
+            if(!userName3.getText().toString().equals("")) {
                 users.add(userName3.getText().toString());
             }
-            if(userName4.getText().toString().equals("")) {
+            if(!userName4.getText().toString().equals("")) {
                 users.add(userName4.getText().toString());
             }
 

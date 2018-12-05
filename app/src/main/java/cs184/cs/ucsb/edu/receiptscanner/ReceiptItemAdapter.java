@@ -80,10 +80,6 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
             holder.checkBox3.setVisibility(View.VISIBLE);
         }
 
-//        holder.checkBox0.setChecked(false);
-//        holder.checkBox1.setChecked(false);
-//        holder.checkBox2.setChecked(false);
-//        holder.checkBox3.setChecked(false);
 
 
         holder.checkBox0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
