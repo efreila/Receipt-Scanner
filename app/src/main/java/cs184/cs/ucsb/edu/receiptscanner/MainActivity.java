@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
     private SplitReceiptFragment splitReceiptFragment;
     private Button galleryBtn;
     private TextView loadingTextView;
+    private TextView userNameHint;
+    private EditText userName1;
+    private EditText userName2;
+    private EditText userName3;
+    private EditText userName4;
     private Bitmap bitmap;
     private boolean detectedFirstItem = false;
     private boolean addToItem = false;
@@ -56,14 +62,24 @@ public class MainActivity extends AppCompatActivity {
         galleryBtn = findViewById(R.id.galleryBtn);
         loadingTextView = findViewById(R.id.loadingTextView);
         loadingTextView.setVisibility(View.INVISIBLE);
+        userNameHint = findViewById(R.id.userNameHint);
+        userName1 = findViewById(R.id.userName1);
+        userName2 = findViewById(R.id.userName2);
+        userName3 = findViewById(R.id.userName3);
+        userName4 = findViewById(R.id.userName4);
 
         FirebaseApp.initializeApp(this);
 
         galleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 1);
+                if(userName2.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), "You must have at least 2 users.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, 1);
+                }
             }
         });
     }
@@ -210,6 +226,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             galleryBtn.setVisibility(View.INVISIBLE);
+            userNameHint.setVisibility(View.INVISIBLE);
+            userName1.setVisibility(View.INVISIBLE);
+            userName2.setVisibility(View.INVISIBLE);
+            userName3.setVisibility(View.INVISIBLE);
+            userName4.setVisibility(View.INVISIBLE);
             loadingTextView.setVisibility(View.VISIBLE);
         }
 
@@ -230,11 +251,27 @@ public class MainActivity extends AppCompatActivity {
                 products.add(p.getName());
                 prices.add("$" + String.format("%.2f", p.getPrice()));
             }
+
+            ArrayList<String> users = new ArrayList<String>();
+            if(userName1.getText().toString().equals("")) {
+                users.add(userName1.getText().toString());
+            }
+            if(userName2.getText().toString().equals("")) {
+                users.add(userName2.getText().toString());
+            }
+            if(userName3.getText().toString().equals("")) {
+                users.add(userName3.getText().toString());
+            }
+            if(userName4.getText().toString().equals("")) {
+                users.add(userName4.getText().toString());
+            }
+
             splitReceiptFragment = new SplitReceiptFragment();
             splitReceiptFragment.setCancelable(false);
             Bundle args = new Bundle();
             args.putStringArrayList("products", products);
             args.putStringArrayList("prices", prices);
+            args.putStringArrayList("users", users);
             splitReceiptFragment.setArguments(args);
             splitReceiptFragment.show(getSupportFragmentManager(), "show split receipt fragment");
         }

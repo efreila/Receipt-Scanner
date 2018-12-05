@@ -32,6 +32,7 @@ public class SplitReceiptFragment extends DialogFragment {
 
     ArrayList<String> productsList;
     ArrayList<String> pricesList;
+    ArrayList<String> usersList;
     double[] userPayments = new double[4];
 
 
@@ -56,6 +57,7 @@ public class SplitReceiptFragment extends DialogFragment {
 
         productsList = getArguments().getStringArrayList("products");
         pricesList = getArguments().getStringArrayList("prices");
+        usersList = getArguments().getStringArrayList("users");
     }
 
     @Override
@@ -64,7 +66,7 @@ public class SplitReceiptFragment extends DialogFragment {
         doneBtn = (Button) view.findViewById(R.id.doneBtn);
         recyclerView = (RecyclerView) view.findViewById(R.id.mRecyclerView);
 
-        receiptItemAdapter = new ReceiptItemAdapter(productsList, pricesList);
+        receiptItemAdapter = new ReceiptItemAdapter(productsList, pricesList, usersList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

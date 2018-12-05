@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.MyViewHolder> {
     private ArrayList<String> productsList;
     private ArrayList<String> pricesList;
+    private ArrayList<String> usersList;
     private final boolean[] mCheckedStateA;
     private final boolean[] mCheckedStateB;
     private final boolean[] mCheckedStateC;
@@ -35,9 +36,11 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
         }
     }
 
-    public ReceiptItemAdapter(ArrayList<String> productsList, ArrayList<String> pricesList) {
+    public ReceiptItemAdapter(ArrayList<String> productsList, ArrayList<String> pricesList, ArrayList<String> usersList) {
         this.productsList = productsList;
         this.pricesList = pricesList;
+        this.usersList = usersList;
+
         mCheckedStateA = new boolean[productsList.size()];
         mCheckedStateB = new boolean[productsList.size()];
         mCheckedStateC = new boolean[productsList.size()];
@@ -59,6 +62,23 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
 
         holder.product.setText(currProduct);
         holder.price.setText(currPrice);
+
+        holder.checkBox0.setText(usersList.get(0));
+        holder.checkBox1.setText(usersList.get(1));
+        holder.checkBox2.setVisibility(View.INVISIBLE);
+        holder.checkBox3.setVisibility(View.INVISIBLE);
+
+        if(usersList.size() == 3) {
+            holder.checkBox2.setText(usersList.get(2));
+            holder.checkBox2.setVisibility(View.VISIBLE);
+        }
+
+        if(usersList.size() == 4) {
+            holder.checkBox2.setText(usersList.get(2));
+            holder.checkBox2.setVisibility(View.VISIBLE);
+            holder.checkBox3.setText(usersList.get(3));
+            holder.checkBox3.setVisibility(View.VISIBLE);
+        }
 
 //        holder.checkBox0.setChecked(false);
 //        holder.checkBox1.setChecked(false);
