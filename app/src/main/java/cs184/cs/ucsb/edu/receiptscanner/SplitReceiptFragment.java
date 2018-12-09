@@ -89,6 +89,7 @@ public class SplitReceiptFragment extends DialogFragment {
 
     private void calculateDebt(boolean[] checkedStatesA, boolean[] checkedStatesB, boolean[] checkedStatesC, boolean[] checkedStatesD) {
         int divider;
+        userPayments = new double[4];
         double[] newItemPrices = new double[receiptItemAdapter.getItemCount()];
         missingPayer = false;
         for(int i = 0; i < receiptItemAdapter.getItemCount(); i++) {
@@ -147,7 +148,6 @@ public class SplitReceiptFragment extends DialogFragment {
         Bundle args = new Bundle();
         args.putDoubleArray("debtList", userPayments);
         args.putStringArrayList("users", usersList);
-        userPayments = new double[4];
         splitPricesFragment.setArguments(args);
         splitPricesFragment.show(getFragmentManager(), "show split prices fragment");
     }
