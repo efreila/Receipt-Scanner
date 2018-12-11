@@ -22,7 +22,6 @@ import java.util.ArrayList;
 public class SplitReceiptFragment extends DialogFragment {
     View view;
     Context context;
-    ItemAdapter adapter;
     Button doneBtn;
     boolean missingPayer;
 
@@ -34,7 +33,6 @@ public class SplitReceiptFragment extends DialogFragment {
     ArrayList<String> pricesList;
     ArrayList<String> usersList;
     double[] userPayments = new double[4];
-
 
     public SplitReceiptFragment() {}
 
@@ -66,13 +64,17 @@ public class SplitReceiptFragment extends DialogFragment {
         doneBtn = (Button) view.findViewById(R.id.doneBtn);
         recyclerView = (RecyclerView) view.findViewById(R.id.mRecyclerView);
 
+
         productsList.remove("SUBTOTAL");
+
+        //set adapter to display all products, prices, and checkboxes in recycler view
         receiptItemAdapter = new ReceiptItemAdapter(productsList, pricesList, usersList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(receiptItemAdapter);
 
+        //determine which checkboxes clicked
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,6 +82,7 @@ public class SplitReceiptFragment extends DialogFragment {
                 boolean[] checkedStatesB = receiptItemAdapter.getmCheckedStateB();
                 boolean[] checkedStatesC = receiptItemAdapter.getmCheckedStateC();
                 boolean[] checkedStatesD = receiptItemAdapter.getmCheckedStateD();
+                //split each product price based on checkboxes clicked
                 calculateDebt(checkedStatesA, checkedStatesB, checkedStatesC, checkedStatesD);
             }
         });
@@ -89,9 +92,16 @@ public class SplitReceiptFragment extends DialogFragment {
 
     private void calculateDebt(boolean[] checkedStatesA, boolean[] checkedStatesB, boolean[] checkedStatesC, boolean[] checkedStatesD) {
         int divider;
+        //saves user debts
         userPayments = new double[4];
+
+        //price based on how many users split
         double[] newItemPrices = new double[receiptItemAdapter.getItemCount()];
+
+        //true if product has no payer
         missingPayer = false;
+
+        //determine number of payers per product
         for(int i = 0; i < receiptItemAdapter.getItemCount(); i++) {
             divider = 0;
 
@@ -108,17 +118,20 @@ public class SplitReceiptFragment extends DialogFragment {
                 divider++;
             }
 
+            //check if all items paid for
             if(divider == 0){
                 missingPayer = true;
                 Toast.makeText(getActivity(), "Missing payer for " + productsList.get(i),
                         Toast.LENGTH_LONG).show();
             }
             else{
+                //divide price
                 newItemPrices[i] = Double.parseDouble(pricesList.get(i).substring(1))/divider;
             }
 
         }
 
+        //add up debts per user
         for(int i = 0; i < newItemPrices.length; i++) {
             if(checkedStatesA[i]) {
                 userPayments[0] += newItemPrices[i];
@@ -137,6 +150,7 @@ public class SplitReceiptFragment extends DialogFragment {
         for(double p : userPayments)
             Log.e("userpayments", p + "");
 
+        //show next fragment if all items paid for
         if(!missingPayer)
              displayFragment();
     }

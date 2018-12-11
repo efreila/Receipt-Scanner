@@ -54,11 +54,13 @@ public class SplitPricesFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.split_prices_activity, container, false);
 
+        //display usernames
         firstUsername = (TextView) view.findViewById(R.id.firstUserName);
         secondUsername = (TextView) view.findViewById(R.id.secondUserName);
         thirdUsername = (TextView) view.findViewById(R.id.thirdUserName);
         fourthUsername = (TextView) view.findViewById(R.id.fourthUserName);
 
+        //display user debts
         firstUserDebt = (TextView) view.findViewById(R.id.firstUserDebt);
         secondUserDebt = (TextView) view.findViewById(R.id.secondUserDebt);
         thirdUserDebt = (TextView) view.findViewById(R.id.thirdUserDebt);
@@ -83,14 +85,16 @@ public class SplitPricesFragment extends DialogFragment {
             fourthUserDebt.setVisibility(View.INVISIBLE);
         }
 
-
+        //display with appropriate precision
         firstUserDebt.setText("$" + String.format("%.2f", debtList[0]));
         secondUserDebt.setText("$" + String.format("%.2f", debtList[1]));
         thirdUserDebt.setText("$" + String.format("%.2f", debtList[2]));
         fourthUserDebt.setText("$" + String.format("%.2f", debtList[3]));
 
+
         finishBtn = (Button) view.findViewById(R.id.finishBtn);
 
+        //restart main activity
         finishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

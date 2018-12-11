@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                             for (FirebaseVisionDocumentText.Block block: result.getBlocks()) {
                                 for (FirebaseVisionDocumentText.Paragraph paragraph: block.getParagraphs()) {
                                     String paragraphText = paragraph.getText();
+
                                     if(detectedFirstItem == false) {
                                         for(int i = 0; i < paragraphText.length(); i++) {
                                             if(paragraphText.charAt(i) == '.') {
@@ -124,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     if(detectedFirstItem) {
+                                        //determine type of item
                                         for (FirebaseVisionDocumentText.Word word: paragraph.getWords()) {
                                             String wordText = word.getText();
 //                                            System.out.println(wordText);
@@ -155,14 +157,17 @@ public class MainActivity extends AppCompatActivity {
                                                     }
 
                                                     if(currItem == "CPN"){
+                                                        //subtract from previously parsed product price
                                                         productsList.get(productsList.size() - 1).price -= Double.parseDouble(currItemPrice);
                                                     } else if (currItem == "TAX"){
+                                                        //add to previously parsed product price
                                                         productsList.get(productsList.size() - 1).price += Double.parseDouble(currItemPrice);
                                                     }else{
+                                                        //normal item
                                                         productsList.add(new Product(currItem, Double.parseDouble(currItemPrice)));
                                                     }
 
-
+                                                    //reset variables
                                                     currItem = "";
                                                     currItemPrice = "";
                                                     addToPrice = false;
@@ -204,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                             taskDone = true;
 
                             for (Product p : productsList)
-                                Log.e("Product", p.name + " price " + p.price);
+                                Log.d("Product", p.name + " price " + p.price);
                                 //System.out.println("Product: " + p.name + ", Price: " + p.price);
                         }
                     })
@@ -224,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
+            //while scanning receipt
             galleryBtn.setVisibility(View.INVISIBLE);
             userNameHint.setVisibility(View.INVISIBLE);
             userName1.setVisibility(View.INVISIBLE);
@@ -235,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
+            //scan receipt in background
             detectText();
             while(taskDone == false){
             }
@@ -265,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
                 users.add(userName4.getText().toString());
             }
 
+            //start split receipt fragment
             splitReceiptFragment = new SplitReceiptFragment();
             splitReceiptFragment.setCancelable(false);
             Bundle args = new Bundle();

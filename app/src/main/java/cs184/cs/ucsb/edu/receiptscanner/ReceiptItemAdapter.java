@@ -41,6 +41,7 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
         this.pricesList = pricesList;
         this.usersList = usersList;
 
+        //saves state of checkbox for each user
         mCheckedStateA = new boolean[productsList.size()];
         mCheckedStateB = new boolean[productsList.size()];
         mCheckedStateC = new boolean[productsList.size()];
@@ -63,16 +64,19 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
         holder.product.setText(currProduct);
         holder.price.setText(currPrice);
 
+        //determine number of users to display (2 users)
         holder.checkBox0.setText(usersList.get(0));
         holder.checkBox1.setText(usersList.get(1));
         holder.checkBox2.setVisibility(View.INVISIBLE);
         holder.checkBox3.setVisibility(View.INVISIBLE);
 
+        //if we have 3 users
         if(usersList.size() == 3) {
             holder.checkBox2.setText(usersList.get(2));
             holder.checkBox2.setVisibility(View.VISIBLE);
         }
 
+        //four users
         if(usersList.size() == 4) {
             holder.checkBox2.setText(usersList.get(2));
             holder.checkBox2.setVisibility(View.VISIBLE);
@@ -80,8 +84,7 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
             holder.checkBox3.setVisibility(View.VISIBLE);
         }
 
-
-
+        //listener for checkboxes corresponding to first user
         holder.checkBox0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -94,6 +97,7 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
             }
         });
 
+        //listener for checkboxes corresponding to second user
         holder.checkBox1.setOnCheckedChangeListener(new   CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -107,6 +111,7 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
 
         });
 
+        //listener for checkboxes corresponding to third user
         holder.checkBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -120,6 +125,7 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
             }
         });
 
+        //listener for checkboxes corresponding to fourth user
         holder.checkBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -133,6 +139,7 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
             }
         });
 
+        //saving checkbox state when scrolling
         if(mCheckedStateA[position]) {
             holder.checkBox0.setChecked(true);
         } else {
