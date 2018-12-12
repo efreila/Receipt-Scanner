@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> users = new ArrayList<String>();
     ArrayList<String> userEmails = new ArrayList<String>();
 
+    int userCount;
+    String mainUser;
+
 
     boolean taskDone = false;
 
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         userName4 = findViewById(R.id.userName4);
         welcomeTV = findViewById(R.id.welcomeTV);
         welcomeTV.setText("Welcome " + intent.getStringExtra("FIRSTNAME"));
+        mainUser = intent.getStringExtra("FIRSTNAME");
         userName1.setText(intent.getStringExtra("USERNAME"));
         userName1.setFocusable(false);
 
@@ -91,21 +95,22 @@ public class MainActivity extends AppCompatActivity {
         galleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int userCounter = 1;
+                // int userCounter = 1;
+                userCount = 1;
                 if (!userName2.getText().toString().equals(""))
-                    userCounter++;
+                    userCount++;
                 if (!userName3.getText().toString().equals(""))
-                    userCounter++;
+                    userCount++;
                 if (!userName4.getText().toString().equals(""))
-                    userCounter++;
+                    userCount++;
 
-                if (userCounter == 1) {
+                if (userCount == 1) {
                     Toast.makeText(getApplicationContext(), "You must have at least 2 users.", Toast.LENGTH_SHORT).show();
 
                 }
                 else {
                  /* Check for valid usernames in the Firebase DB */
-                    final int uCount = userCounter;
+                    // final int uCount = userCounter;
                     FirebaseDatabase.getInstance().getReference().child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
                         int usersVerified = 1;
                         boolean showToast = true;
@@ -120,15 +125,22 @@ public class MainActivity extends AppCompatActivity {
                                             usersVerified++;
                                         }
 
-                                        if(usersVerified == uCount) {
+                                        if(usersVerified == userCount) {
                                             showToast = false;
                                             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
                                             startActivityForResult(intent, 1);
                                         }
                                     }
 
-                                    if(showToast)
+                                    if(showToast) {
                                         Toast.makeText(getApplicationContext(), "Please enter valid usernames...", Toast.LENGTH_SHORT).show();
+                                        userCount = 1;
+                                        userName2.setText("");
+                                        userName3.setText("");
+                                        userName4.setText("");
+                                        users.clear();
+                                        users.add(mainUser);
+                                    }
 
 
 

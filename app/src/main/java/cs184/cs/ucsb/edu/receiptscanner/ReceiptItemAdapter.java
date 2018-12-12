@@ -72,12 +72,14 @@ public class ReceiptItemAdapter extends RecyclerView.Adapter<ReceiptItemAdapter.
 
         //if we have 3 users
         if(usersList.size() == 3) {
+            System.out.println("HOORAY");
             holder.checkBox2.setText(usersList.get(2));
             holder.checkBox2.setVisibility(View.VISIBLE);
         }
 
         //four users
         if(usersList.size() == 4) {
+            System.out.println("UH OHHH");
             holder.checkBox2.setText(usersList.get(2));
             holder.checkBox2.setVisibility(View.VISIBLE);
             holder.checkBox3.setText(usersList.get(3));
