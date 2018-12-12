@@ -20,6 +20,10 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.document.FirebaseVisionCloudDocumentRecognizerOptions;
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Button galleryBtn;
     private TextView loadingTextView;
     private TextView userNameHint;
+    private TextView welcomeTV;
     private EditText userName1;
     private EditText userName2;
     private EditText userName3;
@@ -50,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
     private String currItem = "";
     private String currItemPrice = "";
     ArrayList<Product> productsList = new ArrayList<Product>();
+    ArrayList<String> users = new ArrayList<String>();
+    ArrayList<String> userEmails = new ArrayList<String>();
+
+
     boolean taskDone = false;
 
 
@@ -57,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
 
         galleryBtn = findViewById(R.id.galleryBtn);
         loadingTextView = findViewById(R.id.loadingTextView);
@@ -66,18 +77,71 @@ public class MainActivity extends AppCompatActivity {
         userName2 = findViewById(R.id.userName2);
         userName3 = findViewById(R.id.userName3);
         userName4 = findViewById(R.id.userName4);
+        welcomeTV = findViewById(R.id.welcomeTV);
+        welcomeTV.setText("Welcome " + intent.getStringExtra("FIRSTNAME"));
+        userName1.setText(intent.getStringExtra("USERNAME"));
+        userName1.setFocusable(false);
+
+        users.add(intent.getStringExtra("FIRSTNAME"));
+        userEmails.add(intent.getStringExtra("EMAIL"));
+
 
         FirebaseApp.initializeApp(this);
 
         galleryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(userName2.getText().toString().equals("")) {
+                int userCounter = 1;
+                if (!userName2.getText().toString().equals(""))
+                    userCounter++;
+                if (!userName3.getText().toString().equals(""))
+                    userCounter++;
+                if (!userName4.getText().toString().equals(""))
+                    userCounter++;
+
+                if (userCounter == 1) {
                     Toast.makeText(getApplicationContext(), "You must have at least 2 users.", Toast.LENGTH_SHORT).show();
+
                 }
                 else {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, 1);
+                 /* Check for valid usernames in the Firebase DB */
+                    final int uCount = userCounter;
+                    FirebaseDatabase.getInstance().getReference().child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
+                        int usersVerified = 1;
+                        boolean showToast = true;
+                        @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        String uUserName = snapshot.child("username").getValue(String.class);
+
+                                        if(uUserName.equals(userName2.getText().toString()) || uUserName.equals(userName3.getText().toString()) || uUserName.equals(userName4.getText().toString())) {
+                                            users.add(snapshot.child("name").getValue(String.class));
+                                            userEmails.add(snapshot.child("email").getValue(String.class));
+                                            usersVerified++;
+                                        }
+
+                                        if(usersVerified == uCount) {
+                                            showToast = false;
+                                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                                            startActivityForResult(intent, 1);
+                                        }
+                                    }
+
+                                    if(showToast)
+                                        Toast.makeText(getApplicationContext(), "Please enter valid usernames...", Toast.LENGTH_SHORT).show();
+
+
+
+                                }
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+
+
+
+//                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+//                    startActivityForResult(intent, 1);
                 }
             }
         });
@@ -237,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
             userName3.setVisibility(View.INVISIBLE);
             userName4.setVisibility(View.INVISIBLE);
             loadingTextView.setVisibility(View.VISIBLE);
+            welcomeTV.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -258,19 +323,19 @@ public class MainActivity extends AppCompatActivity {
                 prices.add("$" + String.format("%.2f", p.getPrice()));
             }
 
-            ArrayList<String> users = new ArrayList<String>();
-            if(!userName1.getText().toString().equals("")) {
-                users.add(userName1.getText().toString());
-            }
-            if(!userName2.getText().toString().equals("")) {
-                users.add(userName2.getText().toString());
-            }
-            if(!userName3.getText().toString().equals("")) {
-                users.add(userName3.getText().toString());
-            }
-            if(!userName4.getText().toString().equals("")) {
-                users.add(userName4.getText().toString());
-            }
+//            ArrayList<String> users = new ArrayList<String>();
+//            if(!userName1.getText().toString().equals("")) {
+//                users.add(userName1.getText().toString());
+//            }
+//            if(!userName2.getText().toString().equals("")) {
+//                users.add(userName2.getText().toString());
+//            }
+//            if(!userName3.getText().toString().equals("")) {
+//                users.add(userName3.getText().toString());
+//            }
+//            if(!userName4.getText().toString().equals("")) {
+//                users.add(userName4.getText().toString());
+//            }
 
             //start split receipt fragment
             splitReceiptFragment = new SplitReceiptFragment();
@@ -279,6 +344,8 @@ public class MainActivity extends AppCompatActivity {
             args.putStringArrayList("products", products);
             args.putStringArrayList("prices", prices);
             args.putStringArrayList("users", users);
+            args.putString("mainUsername", userName1.getText().toString());
+            args.putStringArrayList("useremails", userEmails);
             splitReceiptFragment.setArguments(args);
             splitReceiptFragment.show(getSupportFragmentManager(), "show split receipt fragment");
         }

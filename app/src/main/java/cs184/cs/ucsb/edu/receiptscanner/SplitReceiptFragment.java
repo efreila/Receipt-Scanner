@@ -32,6 +32,10 @@ public class SplitReceiptFragment extends DialogFragment {
     ArrayList<String> productsList;
     ArrayList<String> pricesList;
     ArrayList<String> usersList;
+    ArrayList<String> usersEmailList;
+
+    String mainUsername;
+
     double[] userPayments = new double[4];
 
     public SplitReceiptFragment() {}
@@ -56,6 +60,9 @@ public class SplitReceiptFragment extends DialogFragment {
         productsList = getArguments().getStringArrayList("products");
         pricesList = getArguments().getStringArrayList("prices");
         usersList = getArguments().getStringArrayList("users");
+        usersEmailList = getArguments().getStringArrayList("useremails");
+        mainUsername = getArguments().getString("mainUsername");
+
     }
 
     @Override
@@ -162,6 +169,8 @@ public class SplitReceiptFragment extends DialogFragment {
         Bundle args = new Bundle();
         args.putDoubleArray("debtList", userPayments);
         args.putStringArrayList("users", usersList);
+        args.putStringArrayList("useremails", usersEmailList);
+        args.putString("mainUsername", mainUsername);
         splitPricesFragment.setArguments(args);
         splitPricesFragment.show(getFragmentManager(), "show split prices fragment");
     }

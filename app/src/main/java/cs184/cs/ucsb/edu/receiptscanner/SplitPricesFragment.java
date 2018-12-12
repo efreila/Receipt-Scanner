@@ -3,8 +3,11 @@ package cs184.cs.ucsb.edu.receiptscanner;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,19 +16,30 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SplitPricesFragment extends DialogFragment {
     View view;
     Context context;
     Button finishBtn;
+    Button sendEmailBtn;
 
     TextView firstUserDebt, secondUserDebt, thirdUserDebt, fourthUserDebt;
     TextView firstUsername, secondUsername, thirdUsername, fourthUsername;
 
     double[] debtList;
     ArrayList<String> users;
+    ArrayList<String> emails;
+    String mainUser;
 
     public SplitPricesFragment() {}
 
@@ -48,6 +62,9 @@ public class SplitPricesFragment extends DialogFragment {
 
         users = getArguments().getStringArrayList("users");
         debtList = getArguments().getDoubleArray("debtList");
+        emails = getArguments().getStringArrayList("useremails");
+        mainUser = getArguments().getString("mainUsername");
+
     }
 
     @Override
@@ -93,16 +110,55 @@ public class SplitPricesFragment extends DialogFragment {
 
 
         finishBtn = (Button) view.findViewById(R.id.finishBtn);
+        sendEmailBtn = (Button) view.findViewById(R.id.sendEmailBtn);
+
 
         //restart main activity
+        sendEmailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                for(int k = 1; k < users.size(); k++) {
+                    sendEmail(users.get(0), String.format("%.2f", debtList[k]), emails.get(k));
+                }
+
+            }
+        });
+
         finishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), MainActivity.class);
-                getActivity().startActivity(myIntent);
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("FIRSTNAME", users.get(0));
+                intent.putExtra("USERNAME", mainUser);
+                getActivity().startActivity(intent);
             }
         });
 
         return view;
     }
+
+
+    public void sendEmail(String person, String amount, String email) {
+        Intent i = new Intent(Intent.ACTION_SENDTO);
+        i.setData(Uri.parse("mailto:"));
+        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{email});
+        i.putExtra(Intent.EXTRA_SUBJECT, "Your recent shopping trip...");
+        i.putExtra(Intent.EXTRA_TEXT, "You owe " + person + " " + amount + " dollars for your last shopping trip.");
+
+        try {
+            startActivityForResult(
+                    Intent.createChooser(i, "Send shopping charge..."),
+                    1500
+            );
+
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(
+                    getContext(),
+                    "There are no email clients installed.",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+    }
+
 }
