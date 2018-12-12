@@ -3,7 +3,7 @@
 
 ## External resources:
   ### Receipt Parsing:
-    TODO: ERIC PUT STUFF HERE
+    https://firebase.google.com/docs/ml-kit/android/recognize-text
   ### Dialog Fragments: modeled code from previous assignments
   ### Asynchronous Fragment Loading:
     https://stackoverflow.com/questions/25130289/android-asynctask-fragment-loading
