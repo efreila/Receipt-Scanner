@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     int userCount;
     String mainUser;
+    String mainEmail;
 
 
     boolean taskDone = false;
@@ -82,7 +83,10 @@ public class MainActivity extends AppCompatActivity {
         userName4 = findViewById(R.id.userName4);
         welcomeTV = findViewById(R.id.welcomeTV);
         welcomeTV.setText("Welcome " + intent.getStringExtra("FIRSTNAME"));
+
         mainUser = intent.getStringExtra("FIRSTNAME");
+        mainEmail = intent.getStringExtra("EMAIL");
+
         userName1.setText(intent.getStringExtra("USERNAME"));
         userName1.setFocusable(false);
 
@@ -140,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
                                         userName4.setText("");
                                         users.clear();
                                         users.add(mainUser);
+                                        userEmails.clear();
+                                        userEmails.add(mainEmail);
                                     }
 
 

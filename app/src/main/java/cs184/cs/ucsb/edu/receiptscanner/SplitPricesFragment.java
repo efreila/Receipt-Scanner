@@ -119,6 +119,7 @@ public class SplitPricesFragment extends DialogFragment {
             public void onClick(View view) {
 
                 for(int k = 1; k < users.size(); k++) {
+                    System.out.println(emails.get(k));
                     sendEmail(users.get(0), String.format("%.2f", debtList[k]), emails.get(k));
                 }
 

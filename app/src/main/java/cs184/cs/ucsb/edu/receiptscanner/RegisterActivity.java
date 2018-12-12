@@ -17,9 +17,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -31,6 +34,8 @@ public class RegisterActivity extends AppCompatActivity {
     private Button createAccountBtn;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private String newUserUsername;
+    private boolean usernameTaken;
 
 
     @Override
@@ -55,15 +60,46 @@ public class RegisterActivity extends AppCompatActivity {
         emailET = (EditText) findViewById(R.id.emailET);
         passwordET = (EditText) findViewById(R.id.passwordET);
         createAccountBtn = (Button) findViewById(R.id.createAccBtn);
+        usernameTaken = false;
 
 
         createAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createAccount(emailET.getText().toString(), passwordET.getText().toString());
+                usernameTaken = false;
+                newUserUsername = usernameET.getText().toString();
+                FirebaseDatabase.getInstance().getReference().child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
+//                    boolean showToast = false;
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String uUserName = snapshot.child("username").getValue(String.class);
+
+                            if(uUserName.equals(newUserUsername)) {
+//                                showToast = true;
+                                usernameTaken = true;
+                                Toast.makeText(getApplicationContext(), "Username already exists! Please try again...", Toast.LENGTH_SHORT).show();
+                                System.out.println("USER NAME IS ALREADY TAKEN");
+
+                            }
+                        }
+
+                        if(usernameTaken == false) {
+                            createAccount(emailET.getText().toString(), passwordET.getText().toString());
+                        }
+
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+
+
+                // createAccount(emailET.getText().toString(), passwordET.getText().toString());
             }
         });
-
+//                createAccount(emailET.getText().toString(), passwordET.getText().toString());
     }
 
     private void createAccount(String email, String password) {
@@ -93,9 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             System.out.println("Account creation failed...");
-//                            FirebaseAuthException e = (FirebaseAuthException)task.getException();
-//                            System.out.println(e);
-
+                            Toast.makeText(getApplicationContext(), "Incorrect email format", Toast.LENGTH_SHORT).show();
                         }
 
                     }
